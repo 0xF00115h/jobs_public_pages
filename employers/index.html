@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Employer Landscape</title>
+  <meta name="description" content="Employer landscape derived from monitored UK engineering and technology directories.">
+  <link rel="stylesheet" href="../assets/style.css?v=20260827-canonical-relevance">
+  <link rel="stylesheet" href="../assets/employer-sphere-v4.css?v=20260827-fixed-atlas">
+  <link rel="stylesheet" href="../assets/employer-card-terminal.css?v=20260827-active-description">
+</head>
+<body>
+  <header class="site-header">
+    <div>
+      <p class="eyebrow">employers</p>
+      <h1>Employer Landscape</h1>
+      <p class="subtle">Unified view of monitored employer-directory observations.</p>
+      <nav class="site-nav" aria-label="Site sections">
+        <a class="site-nav-link" href="../">Jobs</a>
+        <a class="site-nav-link active" href="./">Employer Landscape</a>
+        <a class="site-nav-link" href="../automation/">Automation</a>
+      </nav>
+    </div>
+    <a class="repo-link" href="https://github.com/0xF00115h/jobs_public_pages">Pages repo</a>
+  </header>
+
+  <main class="landscape-shell">
+    <section id="landscape-summary" class="landscape-summary" aria-label="Latest crawl summary">
+      <div class="empty-state">Loading employer landscape…</div>
+    </section>
+
+    <section class="landscape-controls" aria-label="Employer filters">
+      <label class="search-field">
+        <span class="eyebrow">Filter employers</span>
+        <input id="employer-search" type="search" placeholder="Name, alias, source, job or reason…" autocomplete="off">
+      </label>
+      <label class="source-filter">
+        <span class="eyebrow">Source</span>
+        <select id="source-filter"><option value="">All sources</option></select>
+      </label>
+      <label class="source-filter">
+        <span class="eyebrow">Scope / relevance</span>
+        <select id="scope-filter">
+          <option value="rf_adj" selected>RF + ADJ</option>
+          <option value="rf_core">RF</option>
+          <option value="engineering_adjacent">ADJ</option>
+          <option value="">All records</option>
+          <option value="unresolved">Unresolved / outside canonical</option>
+        </select>
+      </label>
+      <label class="source-filter">
+        <span class="eyebrow">Jobs</span>
+        <select id="jobs-filter">
+          <option value="">All</option>
+          <option value="has_jobs">Has jobs</option>
+          <option value="has_uk_jobs">Has UK jobs</option>
+          <option value="no_jobs">No current jobs</option>
+        </select>
+      </label>
+    </section>
+
+    <section>
+      <div class="landscape-viewbar" aria-label="Landscape view">
+        <div class="landscape-view-switch" role="group" aria-label="View mode">
+          <button type="button" id="view-orig" class="landscape-view-button active" aria-pressed="true">Orig</button>
+          <button type="button" id="view-grid" class="landscape-view-button" aria-pressed="false">Grid</button>
+          <button type="button" id="view-sphere" class="landscape-view-button" aria-pressed="false">Sphere</button>
+        </div>
+        <div id="landscape-count" class="subtle landscape-count"></div>
+      </div>
+
+      <div id="employer-grid" class="employer-grid"></div>
+      <div id="employer-advanced" hidden></div>
+    </section>
+  </main>
+
+  <footer>
+    RF/ADJ labels come from canonical employer curation. Source badges show directory provenance; careers research remains separate.
+  </footer>
+
+  <script src="../assets/secure-data.js?v=20260828-encrypted-site"></script>
+  <script src="../assets/employer-sphere-v4.js?v=20260827-fixed-atlas"></script>
+  <script src="../assets/employer-card-terminal.js?v=20260827-active-description"></script>
+  <script src="../assets/employer-pointer-click-fix.js?v=20260828-desktop-click"></script>
+  <script src="../assets/employers.js?v=20260827-fixed-atlas"></script>
+</body>
+</html>

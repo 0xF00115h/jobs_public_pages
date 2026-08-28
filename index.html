@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jobs Dashboard</title>
+  <meta name="description" content="Job dashboard linking to authenticated private GitHub resources.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div>
+      <p class="eyebrow">jobs</p>
+      <h1>Job Search Dashboard</h1>
+      <p class="subtle">Public navigation shell. Detailed notes remain in private GitHub.</p>
+      <nav class="site-nav" aria-label="Site sections">
+        <a class="site-nav-link active" href="./">Jobs</a>
+        <a class="site-nav-link" href="employers/">Employer Landscape</a>
+        <a class="site-nav-link" href="automation/">Automation</a>
+      </nav>
+    </div>
+    <a class="repo-link" href="https://github.com/0xF00115h/jobs_public_pages">Pages repo</a>
+  </header>
+
+  <main class="layout">
+    <aside class="jobs-panel" aria-label="Jobs">
+      <div class="panel-title">Jobs</div>
+      <nav id="job-list" class="job-list"></nav>
+    </aside>
+
+    <section class="content-panel">
+      <div id="empty-state" class="empty-state">Loading jobs…</div>
+      <article id="job-view" hidden>
+        <div class="job-heading">
+          <div>
+            <p id="job-company" class="eyebrow"></p>
+            <h2 id="job-title"></h2>
+            <p id="job-meta" class="subtle"></p>
+          </div>
+          <div id="job-status" class="status"></div>
+        </div>
+
+        <div class="notice">
+          These links point into the private <code>jobsearch</code> repository. GitHub will show them only when your signed-in account has access.
+        </div>
+
+        <nav id="section-tabs" class="tabs" aria-label="Job sections"></nav>
+        <section id="section-content" class="section-content"></section>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    Public presentation only. Detailed job research remains private; employer landscape data is a sanitized source-directory view.
+  </footer>
+
+  <script src="assets/secure-data.js?v=20260828-encrypted-site"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
