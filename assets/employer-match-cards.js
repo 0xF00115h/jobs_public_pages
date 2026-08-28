@@ -55,7 +55,7 @@
       if (canonicalId) addUnique(matchByCanonicalId, canonicalId, employer.match);
       else if (legacyKey) addUnique(matchByLegacyKey, legacyKey, employer.match);
     }
-    queueMicrotask(decorateAll);
+    decorateAll();
   }
 
   function addUnique(index, key, match) {
@@ -70,7 +70,9 @@
     let pathname = '';
     try { pathname = new URL(href || '', location.href).pathname; } catch (_) {}
     if (response.ok && pathname.endsWith('/employers.json')) {
-      response.clone().json().then(indexMatches).catch(() => {});
+      try {
+        indexMatches(await response.clone().json());
+      } catch (_) {}
     }
     return response;
   };
@@ -138,6 +140,7 @@
     const inner = card.querySelector(':scope > .match-card-inner');
     if (inner) {
       const front = inner.querySelector(':scope > .match-card-front');
+      front?.querySelector('.match-trigger')?.remove();
       if (front) while (front.firstChild) card.insertBefore(front.firstChild, inner);
       inner.remove();
     }
@@ -193,8 +196,6 @@
       if (card.dataset.matchDecorated === '1') undecorate(card);
       return;
     }
-    // A refetch can retain a card node while replacing the decoded payload.  Do
-    // not leave its indicator or back face bound to the previous match object.
     if (card.dataset.matchDecorated === '1' && cardState.get(card)?.match !== match) undecorate(card);
     decorate(card, match);
   }
