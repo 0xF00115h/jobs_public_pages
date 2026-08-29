@@ -8,6 +8,9 @@
   <link rel="stylesheet" href="../assets/style.css?v=20260827-canonical-relevance">
   <link rel="stylesheet" href="../assets/employer-sphere-v4.css?v=20260827-fixed-atlas">
   <link rel="stylesheet" href="../assets/employer-card-terminal.css?v=20260827-active-description">
+  <style>
+    #employer-advanced.sphere-persistent-details .sphere-details > .close { display: none !important; }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -85,5 +88,50 @@
   <script src="../assets/employer-card-terminal.js?v=20260827-active-description"></script>
   <script src="../assets/employer-pointer-click-fix.js?v=20260828-desktop-click"></script>
   <script src="../assets/employers.js?v=20260829-matched-filter"></script>
+  <script>
+    (() => {
+      const advanced = document.getElementById('employer-advanced');
+      const sphereButton = document.getElementById('view-sphere');
+      if (!advanced || !sphereButton) return;
+
+      const sphereActive = () => sphereButton.getAttribute('aria-pressed') === 'true';
+      let scheduled = false;
+
+      function seedSphereDetails() {
+        scheduled = false;
+        advanced.classList.toggle('sphere-persistent-details', sphereActive());
+        if (!sphereActive()) return;
+
+        const details = advanced.querySelector('.sphere-details');
+        if (!details || details.classList.contains('open')) return;
+
+        const visibleCards = [...advanced.querySelectorAll('.sphere-employer:not(.filtered)')];
+        const firstMatched = visibleCards.find(card => card.querySelector('.sphere-match-dot'));
+        (firstMatched || visibleCards[0])?.click();
+      }
+
+      function scheduleSeed() {
+        if (scheduled) return;
+        scheduled = true;
+        requestAnimationFrame(seedSphereDetails);
+      }
+
+      sphereButton.addEventListener('click', scheduleSeed);
+      document.getElementById('view-grid')?.addEventListener('click', scheduleSeed);
+      document.getElementById('view-orig')?.addEventListener('click', scheduleSeed);
+
+      // In Sphere the detail pane is a persistent selection. Clicking empty globe
+      // space should rotate/pan the atlas, not clear the selected employer.
+      advanced.addEventListener('click', event => {
+        if (!sphereActive()) return;
+        if (!event.target.closest('.sphere-stage')) return;
+        if (event.target.closest('.sphere-employer, .sphere-details')) return;
+        event.stopImmediatePropagation();
+      }, true);
+
+      new MutationObserver(scheduleSeed).observe(advanced, { childList: true, subtree: true });
+      scheduleSeed();
+    })();
+  </script>
 </body>
 </html>
