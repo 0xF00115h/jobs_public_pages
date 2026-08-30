@@ -266,3 +266,205 @@
     api.navigateCanonicalId(card.dataset.employerCanonicalId, { select: true });
   }, true);
 })();
+(() => {
+  'use strict';
+
+  const DEFAULT_LINGER_MS = 2400;
+  let token = 0;
+  let running = false;
+
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const sphereActive = () => document.getElementById('view-sphere')?.getAttribute('aria-pressed') === 'true';
+  const canonicalId = value => /^ce_[a-f0-9]{32}$/.test(String(value || '')) ? String(value) : null;
+
+  function filteredIds() {
+    if (typeof filteredEmployers !== 'function') return [];
+    const seen = new Set();
+    const ids = [];
+    for (const employer of filteredEmployers()) {
+      const id = canonicalId(employer?.canonical_id);
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
+      ids.push(id);
+    }
+    return ids;
+  }
+
+  function focusCard(id, active) {
+    const card = [...document.querySelectorAll('#employer-advanced .sphere-employer[data-employer-canonical-id]')]
+      .find(node => node.dataset.employerCanonicalId === id);
+    if (card) card.classList.toggle('journey-focus', active);
+    return card;
+  }
+
+  function clearFocus() {
+    document.querySelectorAll('#employer-advanced .sphere-employer.journey-focus')
+      .forEach(card => card.classList.remove('journey-focus'));
+  }
+
+  function setStatus(text) {
+    const status = document.getElementById('filtered-replay-status');
+    if (status) status.textContent = text;
+  }
+
+  function updateButton() {
+    const button = document.getElementById('replay-filtered-employers');
+    if (!button) return;
+    const count = filteredIds().length;
+    button.disabled = count === 0;
+    button.textContent = running ? 'Cancel replay' : `Replay visible (${count})`;
+    if (!running) setStatus(count ? 'Current filtered set' : 'No canonical employers visible');
+  }
+
+  function cancel({ restoreSpin = true } = {}) {
+    token += 1;
+    running = false;
+    clearFocus();
+    window.EmployerJourneys?.cancel?.();
+    const api = window.EmployerSphere?.current;
+    api?.cancelNavigation?.();
+    if (restoreSpin && sphereActive()) api?.setAutoSpin?.(true, 1);
+    updateButton();
+  }
+
+  async function waitForSphereApi(currentToken) {
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      if (currentToken !== token) return null;
+      const api = window.EmployerSphere?.current;
+      if (sphereActive() && api?.navigateCanonicalId) return api;
+      await sleep(100);
+    }
+    return null;
+  }
+
+  async function play(ids, options = {}) {
+    const unique = [];
+    const seen = new Set();
+    for (const value of Array.isArray(ids) ? ids : []) {
+      const id = canonicalId(typeof value === 'string' ? value : value?.canonical_id);
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
+      unique.push(id);
+    }
+    if (!unique.length) return false;
+
+    cancel({ restoreSpin: false });
+    const currentToken = token;
+    running = true;
+    updateButton();
+
+    if (!sphereActive()) {
+      document.getElementById('view-sphere')?.click();
+      await sleep(350);
+    }
+
+    // EmployerJourneys.cancel() deliberately restores idle spin shortly after
+    // cancellation. Let that handoff complete before the first directed move.
+    await sleep(220);
+
+    const api = await waitForSphereApi(currentToken);
+    if (!api || currentToken !== token) {
+      running = false;
+      setStatus('Sphere navigation unavailable');
+      updateButton();
+      return false;
+    }
+
+    api.setAutoSpin?.(false);
+    const lingerMs = Math.max(700, Number(options.linger_ms) || DEFAULT_LINGER_MS);
+
+    for (let index = 0; index < unique.length; index += 1) {
+      if (currentToken !== token) return false;
+      const id = unique[index];
+      const card = focusCard(id, false);
+      if (!card || card.classList.contains('filtered')) continue;
+
+      clearFocus();
+      api.setAutoSpin?.(false);
+      const nav = api.navigateCanonicalId(id, { select: true });
+      if (!nav) continue;
+
+      setStatus(`${index + 1} / ${unique.length}`);
+      await sleep(Math.max(250, Number(nav.duration) || 1100) + 120);
+      if (currentToken !== token) return false;
+
+      focusCard(id, true);
+      api.setAutoSpin?.(true, 0.10);
+      await sleep(lingerMs);
+      api.setAutoSpin?.(false);
+    }
+
+    if (currentToken === token) {
+      clearFocus();
+      running = false;
+      setStatus(`Complete · ${unique.length} employers`);
+      api.setAutoSpin?.(true, 1);
+      updateButton();
+    }
+    return true;
+  }
+
+  function playCurrentFiltered() {
+    const ids = filteredIds();
+    if (!ids.length) return false;
+    play(ids, { linger_ms: DEFAULT_LINGER_MS });
+    return true;
+  }
+
+  function installControl() {
+    const select = document.getElementById('jobs-filter');
+    const label = select?.closest('label.source-filter');
+    if (!select || !label || document.getElementById('replay-filtered-employers')) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'source-filter filtered-replay-control';
+    label.replaceWith(wrapper);
+    label.classList.remove('source-filter');
+    wrapper.appendChild(label);
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.id = 'replay-filtered-employers';
+    button.className = 'landscape-view-button filtered-replay-button';
+    button.addEventListener('click', () => running ? cancel() : playCurrentFiltered());
+    wrapper.appendChild(button);
+
+    const status = document.createElement('span');
+    status.id = 'filtered-replay-status';
+    status.className = 'subtle filtered-replay-status';
+    wrapper.appendChild(status);
+
+    const style = document.createElement('style');
+    style.textContent = `
+      .filtered-replay-control > label{display:block}
+      .filtered-replay-button{display:block;width:100%;margin-top:7px;padding:7px 9px;cursor:pointer}
+      .filtered-replay-button:disabled{opacity:.45;cursor:default}
+      .filtered-replay-status{display:block;margin-top:4px;font-size:10px;line-height:1.2}
+    `;
+    document.head.appendChild(style);
+
+    document.getElementById('employer-search')?.addEventListener('input', updateButton);
+    document.getElementById('source-filter')?.addEventListener('change', updateButton);
+    document.getElementById('scope-filter')?.addEventListener('change', updateButton);
+    select.addEventListener('change', updateButton);
+    updateButton();
+  }
+
+  window.EmployerSequencePlayer = {
+    play,
+    cancel,
+    playCurrentFiltered,
+    currentFilteredIds: filteredIds,
+    get active() { return running; },
+  };
+
+  function boot() {
+    if (typeof filteredEmployers !== 'function' || !document.getElementById('jobs-filter')) {
+      setTimeout(boot, 100);
+      return;
+    }
+    installControl();
+  }
+
+  boot();
+})();
