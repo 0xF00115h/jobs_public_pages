@@ -254,3 +254,15 @@
 
   bootWhenReady();
 })();
+(() => {
+  'use strict';
+
+  document.addEventListener('dblclick', event => {
+    if (event.isTrusted) return;
+    const card = event.target.closest?.('#employer-advanced .sphere-employer[data-employer-canonical-id]');
+    if (!card) return;
+    const api = window.EmployerSphere?.current;
+    if (!api?.navigateCanonicalId) return;
+    api.navigateCanonicalId(card.dataset.employerCanonicalId, { select: true });
+  }, true);
+})();
