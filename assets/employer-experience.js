@@ -290,6 +290,10 @@
     return ids;
   }
 
+  function selectedCanonicalId() {
+    return canonicalId(document.querySelector('#employer-advanced .sphere-employer.selected[data-employer-canonical-id]')?.dataset.employerCanonicalId);
+  }
+
   function focusCard(id, active) {
     const card = [...document.querySelectorAll('#employer-advanced .sphere-employer[data-employer-canonical-id]')]
       .find(node => node.dataset.employerCanonicalId === id);
@@ -298,8 +302,7 @@
   }
 
   function clearFocus() {
-    document.querySelectorAll('#employer-advanced .sphere-employer.journey-focus')
-      .forEach(card => card.classList.remove('journey-focus'));
+    document.querySelectorAll('#employer-advanced .sphere-employer.journey-focus').forEach(card => card.classList.remove('journey-focus'));
   }
 
   function setStatus(text) {
@@ -309,10 +312,15 @@
 
   function updateButton() {
     const button = document.getElementById('replay-filtered-employers');
-    if (!button) return;
     const count = filteredIds().length;
-    button.disabled = count === 0;
-    button.textContent = running ? 'Cancel replay' : `Replay visible (${count})`;
+    if (button) {
+      button.disabled = count === 0;
+      button.textContent = running ? 'Cancel replay' : `Replay visible (${count})`;
+    }
+    document.querySelectorAll('.sphere-filter-step').forEach(control => {
+      control.disabled = count === 0;
+      control.setAttribute('aria-label', `${control.dataset.direction === 'prev' ? 'Previous' : 'Next'} employer in current filtered set (${count})`);
+    });
     if (!running) setStatus(count ? 'Current filtered set' : 'No canonical employers visible');
   }
 
@@ -358,10 +366,7 @@
       await sleep(350);
     }
 
-    // EmployerJourneys.cancel() deliberately restores idle spin shortly after
-    // cancellation. Let that handoff complete before the first directed move.
     await sleep(220);
-
     const api = await waitForSphereApi(currentToken);
     if (!api || currentToken !== token) {
       running = false;
@@ -378,16 +383,13 @@
       const id = unique[index];
       const card = focusCard(id, false);
       if (!card || card.classList.contains('filtered')) continue;
-
       clearFocus();
       api.setAutoSpin?.(false);
       const nav = api.navigateCanonicalId(id, { select: true });
       if (!nav) continue;
-
       setStatus(`${index + 1} / ${unique.length}`);
       await sleep(Math.max(250, Number(nav.duration) || 1100) + 120);
       if (currentToken !== token) return false;
-
       focusCard(id, true);
       api.setAutoSpin?.(true, 0.10);
       await sleep(lingerMs);
@@ -404,6 +406,30 @@
     return true;
   }
 
+  async function stepFiltered(direction) {
+    const ids = filteredIds();
+    if (!ids.length || !sphereActive()) return false;
+
+    cancel({ restoreSpin: false });
+    const currentToken = token;
+    await sleep(220);
+    const api = await waitForSphereApi(currentToken);
+    if (!api || currentToken !== token) return false;
+
+    const current = selectedCanonicalId();
+    const index = current ? ids.indexOf(current) : -1;
+    const targetIndex = index < 0
+      ? (direction < 0 ? ids.length - 1 : 0)
+      : (index + (direction < 0 ? -1 : 1) + ids.length) % ids.length;
+
+    api.setAutoSpin?.(false);
+    const nav = api.navigateCanonicalId(ids[targetIndex], { select: true });
+    if (!nav) return false;
+    setStatus(`${targetIndex + 1} / ${ids.length} · manual`);
+    updateButton();
+    return true;
+  }
+
   function playCurrentFiltered() {
     const ids = filteredIds();
     if (!ids.length) return false;
@@ -415,45 +441,55 @@
     const select = document.getElementById('jobs-filter');
     const label = select?.closest('label.source-filter');
     if (!select || !label || document.getElementById('replay-filtered-employers')) return;
-
     const wrapper = document.createElement('div');
     wrapper.className = 'source-filter filtered-replay-control';
     label.replaceWith(wrapper);
     label.classList.remove('source-filter');
     wrapper.appendChild(label);
-
     const button = document.createElement('button');
     button.type = 'button';
     button.id = 'replay-filtered-employers';
     button.className = 'landscape-view-button filtered-replay-button';
     button.addEventListener('click', () => running ? cancel() : playCurrentFiltered());
     wrapper.appendChild(button);
-
     const status = document.createElement('span');
     status.id = 'filtered-replay-status';
     status.className = 'subtle filtered-replay-status';
     wrapper.appendChild(status);
-
-    const style = document.createElement('style');
-    style.textContent = `
-      .filtered-replay-control > label{display:block}
-      .filtered-replay-button{display:block;width:100%;margin-top:7px;padding:7px 9px;cursor:pointer}
-      .filtered-replay-button:disabled{opacity:.45;cursor:default}
-      .filtered-replay-status{display:block;margin-top:4px;font-size:10px;line-height:1.2}
-    `;
-    document.head.appendChild(style);
-
     document.getElementById('employer-search')?.addEventListener('input', updateButton);
     document.getElementById('source-filter')?.addEventListener('change', updateButton);
     document.getElementById('scope-filter')?.addEventListener('change', updateButton);
     select.addEventListener('change', updateButton);
-    updateButton();
+  }
+
+  function installSphereStepControls() {
+    const stage = document.querySelector('#employer-advanced .sphere-stage');
+    if (!stage || stage.querySelector('.sphere-filter-step-controls')) return false;
+    const controls = document.createElement('div');
+    controls.className = 'sphere-filter-step-controls';
+    controls.setAttribute('aria-label', 'Step through current filtered employers');
+    controls.innerHTML = '<button type="button" class="sphere-control sphere-filter-step" data-direction="prev" title="Previous visible employer">‹</button><button type="button" class="sphere-control sphere-filter-step" data-direction="next" title="Next visible employer">›</button>';
+    controls.addEventListener('pointerdown', event => event.stopPropagation());
+    controls.addEventListener('wheel', event => event.stopPropagation(), { passive: true });
+    controls.querySelector('[data-direction="prev"]')?.addEventListener('click', event => { event.stopPropagation(); stepFiltered(-1); });
+    controls.querySelector('[data-direction="next"]')?.addEventListener('click', event => { event.stopPropagation(); stepFiltered(1); });
+    stage.appendChild(controls);
+    return true;
+  }
+
+  function installStyles() {
+    if (document.getElementById('employer-sequence-player-style')) return;
+    const style = document.createElement('style');
+    style.id = 'employer-sequence-player-style';
+    style.textContent = '.filtered-replay-control>label{display:block}.filtered-replay-button{display:block;width:100%;margin-top:7px;padding:7px 9px;cursor:pointer}.filtered-replay-button:disabled{opacity:.45;cursor:default}.filtered-replay-status{display:block;margin-top:4px;font-size:10px;line-height:1.2}.sphere-filter-step-controls{position:absolute;right:min(365px,30vw);top:50%;transform:translateY(-50%);display:flex;gap:5px;z-index:9;pointer-events:auto}.sphere-filter-step{min-width:34px;height:40px;padding:4px 9px;font-size:24px;line-height:1;border-radius:9px;background:rgba(13,17,23,.9);backdrop-filter:blur(4px)}.sphere-filter-step:disabled{opacity:.35;cursor:default}@media(max-width:760px){.sphere-filter-step-controls{right:10px;top:54%}.sphere-filter-step{min-width:32px;height:38px;font-size:22px}}';
+    document.head.appendChild(style);
   }
 
   window.EmployerSequencePlayer = {
     play,
     cancel,
     playCurrentFiltered,
+    stepFiltered,
     currentFilteredIds: filteredIds,
     get active() { return running; },
   };
@@ -463,7 +499,10 @@
       setTimeout(boot, 100);
       return;
     }
+    installStyles();
     installControl();
+    if (!installSphereStepControls()) setTimeout(boot, 150);
+    updateButton();
   }
 
   boot();
