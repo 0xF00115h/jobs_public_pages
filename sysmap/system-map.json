@@ -453,6 +453,209 @@
     "process_patterns": 4,
     "relationships": 28
   },
+  "layout": {
+    "areas": {
+      "canonical_identity": {
+        "h": 330,
+        "label_anchor": "top_left",
+        "w": 340,
+        "x": 520,
+        "y": 300
+      },
+      "careers_research": {
+        "h": 250,
+        "label_anchor": "top_left",
+        "w": 270,
+        "x": 810,
+        "y": 170
+      },
+      "match_alignment": {
+        "h": 250,
+        "label_anchor": "top_left",
+        "w": 280,
+        "x": 1110,
+        "y": 270
+      },
+      "organisation_assessment": {
+        "h": 270,
+        "label_anchor": "top_left",
+        "w": 300,
+        "x": 820,
+        "y": 470
+      },
+      "public_ui": {
+        "h": 250,
+        "label_anchor": "top_left",
+        "w": 270,
+        "x": 1440,
+        "y": 260
+      },
+      "publication": {
+        "h": 300,
+        "label_anchor": "top_left",
+        "w": 310,
+        "x": 1260,
+        "y": 540
+      },
+      "review_observability": {
+        "h": 260,
+        "label_anchor": "top_left",
+        "w": 430,
+        "x": 1080,
+        "y": 800
+      },
+      "source_acquisition": {
+        "h": 300,
+        "label_anchor": "top_left",
+        "w": 300,
+        "x": 180,
+        "y": 260
+      },
+      "supervisor_control": {
+        "h": 250,
+        "label_anchor": "top_left",
+        "w": 420,
+        "x": 610,
+        "y": 790
+      }
+    },
+    "backbone_relationships": [
+      "observations_feed_authorities",
+      "authorities_converge_canonical",
+      "convergence_writes_canonical",
+      "canonical_keys_careers",
+      "canonical_keys_assessment",
+      "canonical_keys_match",
+      "careers_enriches_public",
+      "assessment_enriches_public",
+      "match_enriches_public",
+      "canonical_enriches_public",
+      "public_publishes_bundle",
+      "bundle_virtualized_runtime",
+      "secure_runtime_renders_landscape",
+      "supervisor_controls_assessment",
+      "system_evidence_curates_sysmap"
+    ],
+    "canvas": {
+      "backbone_only_default": true,
+      "edge_labels_default": false,
+      "height": 980,
+      "min_node_gap": 28,
+      "width": 1600
+    },
+    "components": {
+      "activity_history": {
+        "level": 2,
+        "x": 1150,
+        "y": 710
+      },
+      "assessment_conveyor": {
+        "level": 1,
+        "x": 740,
+        "y": 430
+      },
+      "assessment_state": {
+        "level": 1,
+        "x": 870,
+        "y": 535
+      },
+      "canonical_convergence": {
+        "level": 1,
+        "x": 430,
+        "y": 220
+      },
+      "canonical_registry": {
+        "level": 0,
+        "width": 190,
+        "x": 555,
+        "y": 315
+      },
+      "careers_resolver": {
+        "level": 1,
+        "x": 770,
+        "y": 125
+      },
+      "careers_state": {
+        "level": 1,
+        "x": 855,
+        "y": 220
+      },
+      "companies_curation": {
+        "level": 2,
+        "x": 1290,
+        "y": 820
+      },
+      "employer_landscape_ui": {
+        "level": 0,
+        "width": 175,
+        "x": 1480,
+        "y": 240
+      },
+      "encrypted_bundle": {
+        "level": 1,
+        "x": 1300,
+        "y": 610
+      },
+      "match_convergence": {
+        "level": 2,
+        "x": 1060,
+        "y": 205
+      },
+      "match_registry": {
+        "level": 1,
+        "x": 1160,
+        "y": 320
+      },
+      "public_employer_build": {
+        "level": 0,
+        "width": 180,
+        "x": 1160,
+        "y": 515
+      },
+      "review_model_corpus": {
+        "level": 1,
+        "x": 1050,
+        "y": 835
+      },
+      "rf_adj_classification": {
+        "level": 1,
+        "x": 250,
+        "y": 325
+      },
+      "secure_runtime": {
+        "level": 1,
+        "x": 1400,
+        "y": 410
+      },
+      "source_authorities": {
+        "level": 1,
+        "x": 205,
+        "y": 195
+      },
+      "source_observations": {
+        "level": 1,
+        "x": 90,
+        "y": 250
+      },
+      "sphere_journeys": {
+        "level": 2,
+        "x": 1450,
+        "y": 330
+      },
+      "supervisor_control_plane": {
+        "level": 0,
+        "width": 190,
+        "x": 570,
+        "y": 795
+      },
+      "sysmap_model": {
+        "level": 1,
+        "x": 920,
+        "y": 840
+      }
+    },
+    "layout_version": 1
+  },
   "maturity_values": [
     "canonical",
     "experiment",
@@ -461,7 +664,7 @@
     "repeated",
     "reusable"
   ],
-  "model_digest": "c719b49d2c07d8358e7db3272ff03c697ea0b85463bda11cd88fb977ca25ba31",
+  "model_digest": "6f66acec3abd6fd7b51b712d1281364aa2675d959ba3be8e116b74e1e49a2556",
   "model_id": "jobsearch_sysmap",
   "name": "Jobsearch System Map",
   "process_patterns": [
@@ -758,13 +961,20 @@
       "type": "reviews"
     }
   ],
-  "schema_version": 0.1,
-  "status": "initial_curated_seed",
+  "review": {
+    "cadence": "weekly",
+    "curated_authority": "sysmap_yaml",
+    "mode": "propose_only"
+  },
+  "schema_version": 0.2,
+  "status": "curated_foundation_v1",
   "visual_defaults": {
+    "backbone_only": true,
     "detail_mode": "side_panel",
     "max_primary_nodes": 25,
+    "progressive_disclosure": true,
     "show_historical": false,
-    "show_relationship_labels": true,
-    "spatial_metaphor": "overlapping_territories"
+    "show_relationship_labels": false,
+    "spatial_metaphor": "converging_territories"
   }
 }
