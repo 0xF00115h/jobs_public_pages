@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SysMap</title>
+  <meta name="description" content="Curated system map of jobsearch architecture, process maturity and relationships.">
+  <link rel="stylesheet" href="../assets/style.css">
+  <link rel="stylesheet" href="../assets/sysmap.css?v=20260831-v0">
+</head>
+<body>
+  <header class="site-header">
+    <div>
+      <p class="eyebrow">system map</p>
+      <h1>SysMap</h1>
+      <p class="subtle">Curated map of system authorities, reusable processes, control planes and public surfaces.</p>
+      <nav class="site-nav" aria-label="Site sections">
+        <a class="site-nav-link" href="../">Jobs</a>
+        <a class="site-nav-link" href="../companies/">Companies</a>
+        <a class="site-nav-link" href="../employers/">Employer Landscape</a>
+        <a class="site-nav-link" href="../automation/">Automation</a>
+        <a class="site-nav-link active" href="./">SysMap</a>
+      </nav>
+    </div>
+    <a class="repo-link" href="https://github.com/0xF00115h/jobs_public_pages">Pages repo</a>
+  </header>
+
+  <main class="sysmap-shell">
+    <section class="sysmap-toolbar" aria-label="SysMap controls">
+      <div>
+        <p class="eyebrow">View</p>
+        <div class="sysmap-toggle-row">
+          <label><input id="sysmap-show-historical" type="checkbox"> show non-current / experimental</label>
+          <label><input id="sysmap-show-labels" type="checkbox" checked> relationship labels</label>
+        </div>
+      </div>
+      <div id="sysmap-summary" class="subtle">Loading SysMap…</div>
+    </section>
+
+    <section class="sysmap-layout">
+      <div id="sysmap-canvas" class="sysmap-canvas" aria-label="System topology"></div>
+      <aside id="sysmap-detail" class="sysmap-detail" aria-label="Selected component">
+        <div class="empty-state">Select a component to inspect its role, maturity and relationships.</div>
+      </aside>
+    </section>
+
+    <section class="sysmap-patterns" aria-label="Reusable process patterns">
+      <p class="eyebrow">Recurring process patterns</p>
+      <div id="sysmap-pattern-list" class="sysmap-pattern-list"></div>
+    </section>
+  </main>
+
+  <footer>
+    SysMap is a compiled public-safe projection of curated private semantic YAML. It is not an operational authority.
+  </footer>
+  <script src="../assets/sysmap.js?v=20260831-v0"></script>
+</body>
+</html>
