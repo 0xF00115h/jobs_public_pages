@@ -1,13 +1,15 @@
 {
   "areas": 9,
-  "compiled_at": "2026-08-31T16:01:55Z",
+  "compiled_at": "2026-08-31T16:34:24Z",
   "components": 21,
-  "model_digest": "c719b49d2c07d8358e7db3272ff03c697ea0b85463bda11cd88fb977ca25ba31",
+  "layout_version": 1,
+  "model_digest": "6f66acec3abd6fd7b51b712d1281364aa2675d959ba3be8e116b74e1e49a2556",
   "model_id": "jobsearch_sysmap",
   "process_patterns": 4,
   "public_projection": "passed",
   "relationships": 28,
-  "schema_version": 1,
-  "source_commit": "4d27c453aa63cdc48283b912398c411f389b7431",
+  "review_policy_version": 1,
+  "schema_version": 2,
+  "source_commit": "8efdf933896f334829855b6d6b81f3032d550424",
   "validation": "passed"
 }

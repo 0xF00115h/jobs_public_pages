@@ -6,7 +6,7 @@
   <title>SysMap</title>
   <meta name="description" content="Curated system map of jobsearch architecture, process maturity and relationships.">
   <link rel="stylesheet" href="../assets/style.css">
-  <link rel="stylesheet" href="../assets/sysmap.css?v=20260831-v0">
+  <link rel="stylesheet" href="../assets/sysmap.css?v=20260831-v1">
 </head>
 <body>
   <header class="site-header">
@@ -30,8 +30,9 @@
       <div>
         <p class="eyebrow">View</p>
         <div class="sysmap-toggle-row">
-          <label><input id="sysmap-show-historical" type="checkbox"> show non-current / experimental</label>
-          <label><input id="sysmap-show-labels" type="checkbox" checked> relationship labels</label>
+          <label><input id="sysmap-show-historical" type="checkbox"> experimental / historical</label>
+          <label><input id="sysmap-show-all-relationships" type="checkbox"> all relationships</label>
+          <label><input id="sysmap-show-labels" type="checkbox"> relationship labels</label>
         </div>
       </div>
       <div id="sysmap-summary" class="subtle">Loading SysMap…</div>
@@ -40,7 +41,7 @@
     <section class="sysmap-layout">
       <div id="sysmap-canvas" class="sysmap-canvas" aria-label="System topology"></div>
       <aside id="sysmap-detail" class="sysmap-detail" aria-label="Selected component">
-        <div class="empty-state">Select a component to inspect its role, maturity and relationships.</div>
+        <div class="empty-state">Select a component to inspect it. The resting view shows only the architectural backbone; selection reveals local relationships.</div>
       </aside>
     </section>
 
@@ -51,8 +52,8 @@
   </main>
 
   <footer>
-    SysMap is a compiled public-safe projection of curated private semantic YAML. It is not an operational authority.
+    SysMap is a compiled public-safe projection of curated private semantic YAML. Automated review may propose changes; curated YAML remains authoritative.
   </footer>
-  <script src="../assets/sysmap.js?v=20260831-v0"></script>
+  <script src="../assets/sysmap.js?v=20260831-v1"></script>
 </body>
 </html>
