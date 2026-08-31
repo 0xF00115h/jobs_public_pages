@@ -1,0 +1,13 @@
+{
+  "areas": 9,
+  "compiled_at": "2026-08-31T15:49:59Z",
+  "components": 21,
+  "model_digest": "c719b49d2c07d8358e7db3272ff03c697ea0b85463bda11cd88fb977ca25ba31",
+  "model_id": "jobsearch_sysmap",
+  "process_patterns": 4,
+  "public_projection": "passed",
+  "relationships": 28,
+  "schema_version": 1,
+  "source_commit": "145d6188129d1719ce10c2d39c5e9385fabcfdd3",
+  "validation": "passed"
+}
