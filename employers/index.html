@@ -179,7 +179,7 @@
       advanced.addEventListener('click', event => {
         if (!sphereActive()) return;
         if (!event.target.closest('.sphere-stage')) return;
-        if (event.target.closest('.sphere-employer, .sphere-details, .employer-activity')) return;
+        if (event.target.closest('.sphere-employer, .sphere-details, .employer-activity, .sphere-filter-step-controls')) return;
         event.stopImmediatePropagation();
       }, true);
 
