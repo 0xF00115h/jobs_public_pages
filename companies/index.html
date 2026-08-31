@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Companies</title>
+  <meta name="description" content="Curated company intelligence dossiers.">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div>
+      <p class="eyebrow">companies</p>
+      <h1>Companies</h1>
+      <p class="subtle">Manually curated target-company intelligence, including historical signals that remain useful after roles expire.</p>
+      <nav class="site-nav" aria-label="Site sections">
+        <a class="site-nav-link" href="../">Jobs</a>
+        <a class="site-nav-link active" href="./">Companies</a>
+        <a class="site-nav-link" href="../employers/">Employer Landscape</a>
+        <a class="site-nav-link" href="../automation/">Automation</a>
+      </nav>
+    </div>
+    <a class="repo-link" href="https://github.com/0xF00115h/jobs_public_pages">Pages repo</a>
+  </header>
+
+  <main class="layout">
+    <aside class="jobs-panel" aria-label="Companies">
+      <div class="panel-title">Companies</div>
+      <nav id="company-list" class="job-list"></nav>
+    </aside>
+
+    <section class="content-panel">
+      <div id="empty-state" class="empty-state">Loading companies…</div>
+      <article id="company-view" hidden>
+        <div class="job-heading">
+          <div>
+            <p id="company-location" class="eyebrow"></p>
+            <h2 id="company-name"></h2>
+          </div>
+          <div id="company-status" class="status"></div>
+        </div>
+        <div class="notice">Curated company intelligence is not a live-vacancy feed. Historical evidence is retained when it remains useful and is labelled accordingly.</div>
+        <nav id="section-tabs" class="tabs" aria-label="Company sections"></nav>
+        <section id="section-content" class="section-content"></section>
+      </article>
+    </section>
+  </main>
+
+  <footer>Company dossiers are deliberately separate from systematic Employer Landscape records and live Jobs.</footer>
+  <script src="../assets/secure-companies-data.js?v=20260831-companies"></script>
+  <script src="../assets/companies.js?v=20260831-companies"></script>
+</body>
+</html>
