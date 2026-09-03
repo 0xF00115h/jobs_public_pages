@@ -9,6 +9,7 @@
   const protectedNames = new Map([
     ['jobs.json', 'jobs'],
     ['employers.json', 'employers'],
+    ['agencies.json', 'agencies'],
     ['automation.json', 'automation'],
   ]);
 
@@ -104,7 +105,7 @@
 
   async function loadBundle() {
     const response = await nativeFetch(encryptedUrl, { cache: 'no-store' });
-    if (response.status === 404) return null; // Temporary migration compatibility; remove after encrypted cutover.
+    if (response.status === 404) return null;
     if (!response.ok) throw new Error(`Could not load encrypted site data: HTTP ${response.status}`);
     return decryptEnvelope(await response.json());
   }
@@ -123,7 +124,7 @@
     if (!dataName) return nativeFetch(input, init);
     if (!bundlePromise) bundlePromise = loadBundle();
     const bundle = await bundlePromise;
-    if (bundle === null) return nativeFetch(input, init); // Temporary migration compatibility.
+    if (bundle === null) return nativeFetch(input, init);
     if (!(dataName in bundle)) return new Response('', { status: 404, statusText: 'Not Found' });
     return new Response(JSON.stringify(bundle[dataName]), {
       status: 200,
